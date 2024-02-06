@@ -44,13 +44,12 @@ import { load } from 'cheerio';
 export async function POST(request: Request) {
 	const res: { place: string } = await request.json();
 	const { place } = res;
-	const url = `https://booking.com/searchresults.en-gb.html?ss=${place}`;
+	const url = `https://booking.com/searchresults.en-gb.html?ss=Paris`;
 
 	const axiosResponse = await axios.get(url);
 	const $ = load(axiosResponse.data);
 
-	const titleSelector =
-		'.bcbf33c5c3 .efdb2b543b.e4b7a69a57 h1[aria-live="assertive"]';
+	const titleSelector = '.efdb2b543b.e4b7a69a57 h1[aria-live="assertive"]';
 	const title = $(titleSelector).text();
 
 	return Response.json({ title: title });
