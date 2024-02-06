@@ -46,22 +46,13 @@ export async function POST(request: Request) {
 	const { place } = res;
 	const url = `https://booking.com/searchresults.en-gb.html?ss=Lviv`;
 
-	// const axiosResponse = await axios.get(url);
-	const $ = load(`<html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta
-			name="viewport"
-			content="width=device-width, initial-scale=1.0" />
-		<title>Document</title>
-	</head>
-	<body>
-		<h1>Hello world</h1>
-	</body>
-</html>`);
+	const axiosResponse = await axios.get(url);
+	const $ = load(axiosResponse.data);
 
-	const titleSelector = '.efdb2b543b.e4b7a69a57 h1[aria-live="assertive"]';
-	const title = $('h1').text();
+	console.log(axiosResponse.data);
+
+	const titleSelector = 'h1';
+	const title = $(titleSelector).text();
 
 	return Response.json({ title: title });
 }
