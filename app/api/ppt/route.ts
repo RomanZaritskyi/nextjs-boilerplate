@@ -1,6 +1,8 @@
 import axios from 'axios';
 import { load } from 'cheerio';
 import puppeteer from 'puppeteer';
+import { KnownDevices } from 'puppeteer';
+const iPhone = KnownDevices['iPad landscape'];
 
 export async function POST(request: Request) {
 	const res: { place: string } = await request.json();
@@ -9,6 +11,7 @@ export async function POST(request: Request) {
 
 	const browser = await puppeteer.launch({ headless: false });
 	const page = await browser.newPage();
+	await page.emulate(iPhone);
 
 	// Navigate the page to a URL
 	await page.goto(url);
@@ -18,12 +21,13 @@ export async function POST(request: Request) {
 
 	await page.screenshot({ path: '1.png' });
 
-	const titleSelector = 'h1';
+	const titleSelector = '.f6431b446c';
 
 	await page.waitForSelector(titleSelector);
 
 	const amountText = await page.$eval(titleSelector, (el) => el.textContent);
 	console.log(amountText);
+	await browser.close();
 
 	return Response.json({ title: amountText });
 }
