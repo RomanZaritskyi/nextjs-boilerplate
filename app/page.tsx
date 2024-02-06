@@ -1,8 +1,8 @@
 'use client';
-import { FormEvent } from 'react';
-import { json } from 'stream/consumers';
+import { FormEvent, useState } from 'react';
 
 export default function Home() {
+	const [amount, setAmount] = useState({ title: '' });
 	const subnitHandler = async (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		const response = await fetch('/api', {
@@ -10,7 +10,8 @@ export default function Home() {
 			body: JSON.stringify({ name: 'Roman', place: 'Lviv' }),
 		});
 
-		console.log(await response.json());
+		const data = await response.json();
+		console.log(data);
 	};
 
 	return (
