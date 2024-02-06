@@ -65,7 +65,7 @@ export async function POST(request: Request) {
 	const { place } = res;
 	const url = `https://booking.com/searchresults.en-gb.html?ss=Lviv`;
 
-	const browser = await puppeteer.launch({ headless: false });
+	const browser = await puppeteer.launch();
 	const page = await browser.newPage();
 	await page.emulate(iPhone);
 
