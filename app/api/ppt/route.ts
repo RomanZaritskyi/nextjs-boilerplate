@@ -1,5 +1,3 @@
-import axios from 'axios';
-import { load } from 'cheerio';
 import puppeteer from 'puppeteer';
 import { KnownDevices } from 'puppeteer';
 const iPhone = KnownDevices['iPad landscape'];
@@ -9,7 +7,7 @@ export async function POST(request: Request) {
 	const { place } = res;
 	const url = `https://booking.com/searchresults.en-gb.html?ss=Lviv`;
 
-	const browser = await puppeteer.launch();
+	const browser = await puppeteer.launch({ headless: false });
 	const page = await browser.newPage();
 	await page.emulate(iPhone);
 
