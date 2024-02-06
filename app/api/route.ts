@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { load } from 'cheerio';
+import { headers } from 'next/headers';
 // import { NextApiResponse, NextApiRequest } from 'next';
 
 // export default async function handler(
@@ -42,10 +43,42 @@ import { load } from 'cheerio';
 // }
 // ----------------------------------------------------
 
+// export async function POST(request: Request) {
+// 	const res: { place: string } = await request.json();
+// 	const { place } = res;
+// 	const url = `https://booking.com/searchresults.html?ss=Lviv`;
+
+// 	const HEADERS = {
+// 		'User-Agent':
+// 			'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36',
+// 		'Accept-Encoding': 'gzip, deflate, br',
+// 		Accept:
+// 			'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
+// 		Connection: 'keep-alive',
+// 		'Accept-Language': 'en-US,en;q=0.9,lt;q=0.8,et;q=0.7,de;q=0.6',
+// 	};
+
+// 	const axiosResponse = await axios.get(url, { headers: HEADERS });
+// 	const $ = load(axiosResponse.data);
+
+// 	const titleSelector = 'h1';
+// 	const title = $(titleSelector).text();
+
+// 	return Response.json({ title: title });
+// }
+
+import puppeteer from 'puppeteer';
+import { KnownDevices } from 'puppeteer';
+const iPhone = KnownDevices['iPad landscape'];
+
 export async function POST(request: Request) {
 	const res: { place: string } = await request.json();
 	const { place } = res;
-	const url = `https://booking.com/searchresults.html?ss=Lviv`;
+	const url = `https://booking.com/searchresults.en-gb.html?ss=Lviv`;
+
+	const browser = await puppeteer.launch();
+	const page = await browser.newPage();
+	await page.emulate(iPhone);
 
 	const HEADERS = {
 		'User-Agent':
@@ -57,43 +90,19 @@ export async function POST(request: Request) {
 		'Accept-Language': 'en-US,en;q=0.9,lt;q=0.8,et;q=0.7,de;q=0.6',
 	};
 
-	const axiosResponse = await axios.get(url, { headers: HEADERS });
-	const $ = load(axiosResponse.data);
+	// Navigate the page to a URL
+	await page.setExtraHTTPHeaders(HEADERS);
+	await page.goto(url);
 
-	const titleSelector = 'h1';
-	const title = $(titleSelector).text();
+	await page.screenshot({ path: '1.png' });
 
-	return Response.json({ title: title });
+	const titleSelector = '.f6431b446c + div';
+
+	await page.waitForSelector(titleSelector);
+
+	const amountText = await page.$eval(titleSelector, (el) => el.textContent);
+	console.log(amountText);
+	await browser.close();
+
+	return Response.json({ title: amountText });
 }
-
-// import puppeteer from 'puppeteer';
-// import { KnownDevices } from 'puppeteer';
-// const iPhone = KnownDevices['iPad landscape'];
-
-// export async function POST(request: Request) {
-// 	const res: { place: string } = await request.json();
-// 	const { place } = res;
-// 	const url = `https://booking.com/searchresults.en-gb.html?ss=Lviv`;
-
-// 	const browser = await puppeteer.launch();
-// 	const page = await browser.newPage();
-// 	await page.emulate(iPhone);
-
-// 	// Navigate the page to a URL
-// 	await page.goto(url);
-
-// 	// Set screen size
-// 	await page.setViewport({ width: 1080, height: 1024 });
-
-// 	await page.screenshot({ path: '1.png' });
-
-// 	const titleSelector = '.f6431b446c';
-
-// 	await page.waitForSelector(titleSelector);
-
-// 	const amountText = await page.$eval(titleSelector, (el) => el.textContent);
-// 	console.log(amountText);
-// 	await browser.close();
-
-// 	return Response.json({ title: amountText });
-// }
