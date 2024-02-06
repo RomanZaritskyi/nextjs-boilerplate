@@ -45,7 +45,7 @@ import { load } from 'cheerio';
 export async function POST(request: Request) {
 	const res: { place: string } = await request.json();
 	const { place } = res;
-	const url = `https://booking.com/searchresults.en-gb.html?ss=Lviv`;
+	const url = `https://booking.com/searchresults.html?ss=Lviv`;
 
 	const HEADERS = {
 		'User-Agent':
