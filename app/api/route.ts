@@ -49,7 +49,7 @@ export async function POST(request: Request) {
 	const axiosResponse = await axios.get(url);
 	const $ = load(axiosResponse.data);
 
-	const titleSelector = 'div';
+	const titleSelector = 'h1';
 	const title = $(titleSelector).text();
 
 	return Response.json({ title: title });
